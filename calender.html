@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <style>
+        /* CSS styles here */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .calendar {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .month {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+        }
+        
+        .month h1 {
+            margin: 0;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .month button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: inherit;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+        
+        .month button:hover {
+            color: #0056b3;
+        }
+        
+        .days {
+            display: flex;
+            justify-content: space-around;
+            background-color: #f7f7f7;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .day {
+            width: 14.28%; /* Distribute evenly */
+            text-align: center;
+            color: #666;
+        }
+        
+        .dates {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #fff;
+        }
+        
+        .date {
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .date:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .today {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar" id="calendar">
+        <!-- Calendar content will be inserted here dynamically -->
+    </div>
+
+    <script>
+        // JavaScript logic here
+        const calendarContainer = document.getElementById("calendar");
+        const currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        function generateCalendar(month, year) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay();
+
+            const monthName = new Date(year, month, 1).toLocaleString('default', { month: 'long' });
+            const yearHeader = document.createElement("h1");
+            yearHeader.textContent = `${monthName} ${year}`;
+            yearHeader.classList.add("header");
+            calendarContainer.innerHTML = "";
+            calendarContainer.appendChild(yearHeader);
+
+            const monthNav = document.createElement("div");
+            monthNav.classList.add("month");
+            const prevMonthBtn = document.createElement("button");
+            prevMonthBtn.textContent = "❮";
+            prevMonthBtn.addEventListener("click", () => {
+                if (month === 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                } else {
+                    currentMonth--;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            monthNav.appendChild(prevMonthBtn);
+
+            const nextMonthBtn = document.createElement("button");
+            nextMonthBtn.textContent = "❯";
+            nextMonthBtn.addEventListener("click", () => {
+                if (month === 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                } else {
+                    currentMonth++;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            monthNav.appendChild(nextMonthBtn);
+
+            calendarContainer.appendChild(monthNav);
+
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const daysContainer = document.createElement("div");
+            daysContainer.classList.add("days");
+            daysOfWeek.forEach(day => {
+                const dayElem = document.createElement("div");
+                dayElem.textContent = day;
+                dayElem.classList.add("day");
+                daysContainer.appendChild(dayElem);
+            });
+            calendarContainer.appendChild(daysContainer);
+
+            const datesContainer = document.createElement("div");
+            datesContainer.classList.add("dates");
+            calendarContainer.appendChild(datesContainer);
+
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDate = document.createElement("div");
+                emptyDate.classList.add("date");
+                datesContainer.appendChild(emptyDate);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateElement = document.createElement("div");
+                dateElement.classList.add("date");
+                dateElement.textContent = day;
+                if (year === currentDate.getFullYear() && month === currentDate.getMonth() && day === currentDate.getDate()) {
+                    dateElement.classList.add("today");
+                }
+                datesContainer.appendChild(dateElement);
+            }
+        }
+
+        generateCalendar(currentMonth, currentYear);
+    </script>
+</body>
+</html>
